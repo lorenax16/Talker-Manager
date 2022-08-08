@@ -1,15 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
-const verificaEmail = require('./middleware');
-const validaPassword = require('./middleware');
+const { validaPassword, verificaEmail } = require('./middleware');
 const generaToken = require('./generaToken');
-const { verificaIdade } = require('./verificar/idade');
-const { verificaNome } = require('./verificar/nome');
-const { verificaRate } = require('./verificar/rate');
-const { verificaTalk } = require('./verificar/talk');
-const { verificaWatchedAt } = require('./verificar/watchedAt');
-const { verificaToken1 } = require('./verificar/tokenVeri');
+const verificaIdade = require('./verificar/idade');
+const verificaNome = require('./verificar/nome');
+const verificaRate = require('./verificar/rate');
+const verificaTalk = require('./verificar/talk');
+const verificaWatchedAt = require('./verificar/watchedAt');
+const verificaToken1 = require('./verificar/tokenVeri');
 
 const app = express();
 app.use(bodyParser.json());
@@ -21,7 +20,7 @@ const PORT = '3000';
 
 async function talkers() {
   try {
-    const talkerDados = await fs.readFile('./dados.json', { encoding: 'utf-8' });
+    const talkerDados = await fs.readFile('./talker.json', { encoding: 'utf-8' });
     const json = JSON.parse(talkerDados);
     return json;
   } catch (error) {
@@ -42,9 +41,10 @@ async function modificarTalker(list) {
 app.get('/talker', async (_request, response) => {
   try {
     const talker = await talkers();
+    console.log(talker);
     return response.status(HTTP_OK_STATUS).json(talker);
   } catch (error) {
-    return response.status(HTTP_OK_STATUS).end();
+    console.log(error);
   }
 });
 
@@ -63,7 +63,7 @@ app.get('/talker/:id', async (request, response) => {
 app.post('/login', verificaEmail, validaPassword, (_req, res) => {
   try {
     const token = generaToken();
-    return res.status(200).json(token);
+    return res.status(200).json({ token });
   } catch (error) {
     console.log(error);
   }
