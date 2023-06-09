@@ -113,11 +113,11 @@ app.delete('/talker/:id', async (req, res) => {
 // requisito 8
 
 app.get('/talker/search', verificaToken1, async (req, res) => {
-  const { name } = req.query;
+  const { q } = req.query;
   const talker = await talkers();
-  const busca = talker.filter((el) => el.name.includes(name));
+  const busca = talker.filter((el) => el.name.includes(q));
   console.log(busca);
-  if (!name || name.length === 0) {
+  if (!q || q.length === 0) {
     return res.status(200).json(talker);
   }
   if (!busca) {
